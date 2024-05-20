@@ -1,0 +1,77 @@
+{% extends "indexTemplate.html" %}
+
+{% block title %}
+    Signup
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+      <div class="col-md-6">
+          <div class="card">
+              <div class="card-header text-center">
+                  <h3>Sign Up</h3>
+              </div>
+              <div class="card-body">
+                  <form id="signupform" >
+                    {% csrf_token %}
+                      <div class="mb-3">
+                          <label for="username" class="form-label">Username</label>
+                          <input type="text" class="form-control" name="username" id="username" placeholder="Enter your username">
+                      </div>
+                      <div class="mb-3">
+                          <label for="email" class="form-label">Email address</label>
+                          <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com">
+                      </div>
+                      <div class="mb-3">
+                          <label for="password" class="form-label">Password</label>
+                          <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
+                      </div>
+                      <div class="mb-3">
+                          <label for="confirmPassword" class="form-label">Confirm Password</label>
+                          <input type="password" class="form-control" name="confirmpassword"  id="confirmPassword" placeholder="Confirm your password">
+                      </div>
+                      <button type="submit" id="signupFormBtn"  class="btn btn-primary w-100">Sign Up</button>
+                  </form>
+              </div>
+              <div class="card-footer text-center">
+                  <small class="text-muted">Already have an account? <a href="#">Log in</a></small>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  {% comment %} alert() {% endcomment %}
+
+      let SignupformBtn = document.querySelector("#signupFormBtn")
+      let signupForm = document.querySelector("#signupform")
+
+      console.log(SignupformBtn,"SignupformBtn")
+
+      SignupformBtn.addEventListener("click",async(e) => {
+        e.preventDefault()
+        let Formdata = new  FormData(signupForm)
+
+        try{
+          let data = await fetch("/auth/signup", {
+            method : "POST",
+            headers: {'X-CSRFToken': document.querySelector("[name='csrfmiddlewaretoken']").value},
+            body : Formdata
+          }).then(data => data.json())
+          alert(data.msg)
+          {% comment %} console.log(data,"data") {% endcomment %}
+        }catch(err){
+
+        }
+      })
+ 
+
+
+
+</script>
+{% endblock javascript %}
+
