@@ -42,15 +42,21 @@ class Login(View):
     
     def post(self, request):
         username = request.POST.get("username")
-        password = request.POSt.get("password")
-
-        user = authenticate(request, username=username,password=password)
-
-        if user is not None:
+        password = request.POST.get("password")
+        print("login")
+        if username and password:
+            user = authenticate(request, username=username,password=password)
+            print(user,"user")
+            if user is not None:
+                login(request, user)
+                return JsonResponse({
+                    "msg" : "User successfully login"
+                })
+            else:
+                return JsonResponse({
+                    "msg" : "Fail to login "
+                })
+        else :
             return JsonResponse({
-                "msg" : "User successfully login"
-            })
-        else:
-            return JsonResponse({
-                "msg" : "Fail to login "
+                "msg" : "Incomplete values"
             })
