@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout 
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -41,22 +42,34 @@ class Login(View):
         return render(request, self.template_name)
     
     def post(self, request):
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        print("login")
-        if username and password:
-            user = authenticate(request, username=username,password=password)
-            print(user,"user")
-            if user is not None:
-                login(request, user)
+        action = request.POST.get("action")
+
+        if action:
+            if action == "login":
+                username = request.POST.get("username")
+                password = request.POST.get("password")
+                if username and password:
+                    user = authenticate(request, username=username,password=password)
+                    print(user,"user")
+                    if user is not None:
+                        login(request, user)
+                        return JsonResponse({
+                            "msg" : "User successfully login"
+                        })
+                    else:
+                        return JsonResponse({
+                            "msg" : "Fail to login "
+                        })
+                else :
+                    return JsonResponse({
+                        "msg" : "Incomplete values"
+                    })
+            else :
+                logout(request)
                 return JsonResponse({
-                    "msg" : "User successfully login"
-                })
-            else:
-                return JsonResponse({
-                    "msg" : "Fail to login "
+                    "msg" : "User logout successfully"
                 })
         else :
             return JsonResponse({
-                "msg" : "Incomplete values"
+                "msg" : "No action found"
             })
